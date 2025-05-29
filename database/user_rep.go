@@ -8,29 +8,47 @@ import (
 
 func GetUserByID(id int) (*models.User, error) {
 	var user models.User
+	var createdAt []byte // Временная переменная для хранения даты
+
 	err := DB.QueryRow(`
 		SELECT id, username, password, email, created_at 
 		FROM users WHERE id = ?
 	`, id).Scan(
-		&user.ID, &user.Username, &user.Password, &user.Email, &user.CreatedAt,
+		&user.ID, &user.Username, &user.Password, &user.Email, &createdAt,
 	)
 	if err != nil {
 		return nil, err
 	}
+
+	// Парсим дату из байтов
+	user.CreatedAt, err = time.Parse("2006-01-02 15:04:05", string(createdAt))
+	if err != nil {
+		return nil, err
+	}
+
 	return &user, nil
 }
 
 func GetUserByUsername(username string) (*models.User, error) {
 	var user models.User
+	var createdAt []byte // Временная переменная для хранения даты
+
 	err := DB.QueryRow(`
 		SELECT id, username, password, email, created_at 
 		FROM users WHERE username = ?
 	`, username).Scan(
-		&user.ID, &user.Username, &user.Password, &user.Email, &user.CreatedAt,
+		&user.ID, &user.Username, &user.Password, &user.Email, &createdAt,
 	)
 	if err != nil {
 		return nil, err
 	}
+
+	// Парсим дату из байтов
+	user.CreatedAt, err = time.Parse("2006-01-02 15:04:05", string(createdAt))
+	if err != nil {
+		return nil, err
+	}
+
 	return &user, nil
 }
 
