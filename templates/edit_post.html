@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ru" class="h-100" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Редактировать пост</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet">
+</head>
+<body class="d-flex h-100 text-center text-bg-dark">
+    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+        <header class="mb-auto">
+            <div>
+                <h3 class="float-md-start mb-0">Postics</h3>
+                <nav class="nav nav-masthead justify-content-center float-md-end">
+                    <a class="nav-link fw-bold py-1 px-0" href="/">Главная</a>
+                    {{if not .IsAuthenticated}}
+                        <a class="nav-link fw-bold py-1 px-0" href="/login">Вход</a>
+                        <a class="nav-link fw-bold py-1 px-0" href="/register">Регистрация</a>
+                    {{else}}
+                        <a class="nav-link fw-bold py-1 px-0" href="/create-post">Создать пост</a>
+                        <a class="nav-link fw-bold py-1 px-0" href="/profile">Профиль</a>
+                        <a class="nav-link fw-bold py-1 px-0" href="/logout">Выйти</a>
+                    {{end}}
+                </nav>
+            </div>
+        </header>
+
+        <main class="form-signin w-100 m-auto" style="max-width: 800px;">
+            <form method="POST" action="/edit-post/{{.Post.ID}}">
+                <h1 class="h3 mb-3 fw-normal">Редактировать пост</h1>
+                
+                {{if .Error}}
+                    <div class="alert alert-danger">{{.Error}}</div>
+                {{end}}
+                
+                <div class="form-floating mb-2">
+                    <input type="text" class="form-control" id="title" name="title" 
+                           value="{{.Post.Title}}" required>
+                    <label for="title">Заголовок</label>
+                </div>
+                
+                <div class="form-floating mb-2">
+                    <input type="text" class="form-control" id="anons" name="anons" 
+                           value="{{.Post.Anons}}" required>
+                    <label for="anons">Анонс (краткое описание)</label>
+                </div>
+                
+                <div class="form-floating mb-3">
+                    <textarea class="form-control" id="full_text" name="full_text" 
+                              style="height: 300px" required>{{.Post.FullText}}</textarea>
+                    <label for="full_text">Полный текст</label>
+                </div>
+                
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a href="/post/{{.Post.ID}}" class="btn btn-outline-secondary me-md-2">Отмена</a>
+                    <button class="btn btn-primary" type="submit">Сохранить изменения</button>
+                </div>
+            </form>
+        </main>
+
+        <footer class="mt-auto text-white-50">
+            <p>© 2025 Postics</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

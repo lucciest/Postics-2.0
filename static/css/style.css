@@ -1,0 +1,122 @@
+/* Основные стили */
+body {
+  background-color: #121212;
+  color: #e6e6e6;
+}
+
+.cover-container {
+  max-width: 60em;
+}
+
+/* Навигация */
+.nav-masthead .nav-link {
+  color: rgba(255, 255, 255, .5);
+  border-bottom: .25rem solid transparent;
+}
+
+.nav-masthead .nav-link:hover,
+.nav-masthead .nav-link:focus {
+  border-bottom-color: rgba(255, 255, 255, .25);
+}
+
+.nav-masthead .nav-link + .nav-link {
+  margin-left: 1rem;
+}
+
+.nav-masthead .active {
+  color: #fff;
+  border-bottom-color: #fff;
+}
+
+/* Карточки */
+.card {
+  transition: transform 0.3s ease;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card-title {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.card-text {
+  color: #e0e0e0;
+}
+
+/* Комментарии */
+.comments-list {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.comment {
+  border-left: 3px solid #6c757d;
+}
+
+.dropdown-toggle::after {
+  display: none;
+}
+
+.dropdown-menu {
+  background-color: #121212;
+  border: 1px solid #555;
+  border-radius: 0.25rem;
+}
+
+.dropdown-item {
+  color: #e6e6e6;
+}
+
+
+/* Формы */
+.form-control {
+  background-color: #333;
+  border: 1px solid #555;
+  color: #eee;
+}
+
+.form-control:focus {
+  background-color: #444;
+  color: #fff;
+  border-color: #5c6bc0;
+  box-shadow: 0 0 0 0.25rem rgba(92, 107, 192, 0.25);
+}
+
+/* Кнопки */
+.btn-primary {
+  background-color: #5c6bc0;
+  border-color: #5c6bc0;
+}
+
+.btn-primary:hover {
+  background-color: #4d5ba6;
+  border-color: #4d5ba6;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .float-md-start, .float-md-end {
+    float: none !important;
+    text-align: center;
+  }
+  
+  .nav {
+    margin-top: 1rem;
+    justify-content: center;
+  }
+}
+
+/* Анимации */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.card, .comment {
+  animation: fadeIn 0.5s ease-in-out;
+} 
