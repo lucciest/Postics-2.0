@@ -79,9 +79,11 @@
                             </div>
                             <p class="card-text">{{.Content}}</p>
                             
-                            {{if eq $.CurrentUserID .UserID}}
+                            {{if or (eq $.CurrentUserID .UserID) (eq $.CurrentUserID $.Post.AuthorID)}}
                             <div class="comment-actions mt-2">
+                                {{if eq $.CurrentUserID .UserID}}
                                 <a href="/comment/{{.ID}}/edit" class="btn btn-sm btn-outline-warning me-2">Редактировать</a>
+                                {{end}}
                                 <form action="/comment/{{.ID}}/delete" method="POST" style="display: inline;">
                                     <button type="submit" class="btn btn-sm btn-outline-danger" 
                                             onclick="return confirm('Удалить комментарий?')">
