@@ -8,19 +8,19 @@ import (
 
 func GetUserByID(id int) (*models.User, error) {
 	var user models.User
-	var createdAt []byte // Временная переменная для хранения даты
+	var createdAt []byte
 
 	err := DB.QueryRow(`
-		SELECT id, username, password, email, created_at 
-		FROM users WHERE id = ?
-	`, id).Scan(
-		&user.ID, &user.Username, &user.Password, &user.Email, &createdAt,
+        SELECT id, username, password, email, is_admin, created_at 
+        FROM users WHERE id = ?
+    `, id).Scan(
+		&user.ID, &user.Username, &user.Password, &user.Email,
+		&user.IsAdmin, &createdAt,
 	)
 	if err != nil {
 		return nil, err
 	}
 
-	// Парсим дату из байтов
 	user.CreatedAt, err = time.Parse("2006-01-02 15:04:05", string(createdAt))
 	if err != nil {
 		return nil, err
@@ -32,16 +32,21 @@ func GetUserByID(id int) (*models.User, error) {
 func GetUserByUsername(username string) (*models.User, error) {
 	var user models.User
 	var createdAt []byte // Временная переменная для хранения даты
+	var isBanned int
 
 	err := DB.QueryRow(`
-		SELECT id, username, password, email, created_at 
-		FROM users WHERE username = ?
-	`, username).Scan(
-		&user.ID, &user.Username, &user.Password, &user.Email, &createdAt,
+        SELECT id, username, password, email, is_admin, is_banned, created_at 
+        FROM users WHERE username = ?
+    `, username).Scan(
+		&user.ID, &user.Username, &user.Password, &user.Email,
+		&user.IsAdmin, &isBanned, &createdAt,
 	)
 	if err != nil {
 		return nil, err
 	}
+
+	// Конвертируем int в bool
+	user.IsBanned = isBanned != 0
 
 	// Парсим дату из байтов
 	user.CreatedAt, err = time.Parse("2006-01-02 15:04:05", string(createdAt))

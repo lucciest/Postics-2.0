@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru" class="h-100" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Управление постами</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet">
+</head>
+<body class="d-flex h-100 text-center text-bg-dark">
+    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+        <header class="mb-auto">
+            <div>
+                <h3 class="float-md-start mb-0">Postics | Админ</h3>
+                <nav class="nav nav-masthead justify-content-center float-md-end">
+                    <a class="nav-link fw-bold py-1 px-0" href="/admin">Назад</a>
+                    <a class="nav-link fw-bold py-1 px-0" href="/logout">Выйти</a>
+                </nav>
+            </div>
+        </header>
+
+        <main class="px-3 py-4">
+            <div class="container">
+                <h1 class="mb-4">Управление постами</h1>
+                
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Заголовок</th>
+                                <th>Автор</th>
+                                <th>Анонс</th>
+                                <th>Дата</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{range .Posts}}
+                            <tr>
+                                <td>{{.ID}}</td>
+                                <td>{{.Title}}</td>
+                                <td>{{.AuthorUsername}}</td>
+                                <td>{{.Anons}}</td>
+                                <td>{{.CreatedAt | formatDate}}</td>
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <a href="/admin/posts/{{.ID}}/edit" class="btn btn-sm btn-warning">
+                                            Редактировать
+                                        </a>
+                                        <form action="/admin/posts/delete" method="POST">
+                                            <input type="hidden" name="post_id" value="{{.ID}}">
+                                            <button type="submit" class="btn btn-sm btn-danger" 
+                                                    onclick="return confirm('Удалить пост ?')">
+                                                Удалить
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {{end}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <footer class="mt-auto text-white-50">
+            <p>© 2025 Postics</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

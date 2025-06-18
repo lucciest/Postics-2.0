@@ -16,7 +16,7 @@ var AppConfig Config
 func LoadConfig() {
 	dbURL := os.Getenv("DATABASE_URL")
 	if dbURL == "" {
-		dbURL = "root:root@tcp(127.0.0.1:3306)/golang"
+		dbURL = "root:root@tcp(127.0.0.1:3306)/go"
 	}
 
 	port := os.Getenv("PORT")

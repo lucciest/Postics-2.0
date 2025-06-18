@@ -36,6 +36,7 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, tmpl string, data ma
 	data["IsAuthenticated"] = middleware.IsAuthenticated(r)
 	data["CurrentUsername"] = middleware.GetCurrentUsername(r)
 	data["CurrentUserID"] = middleware.GetCurrentUserID(r)
+	data["IsAdmin"] = middleware.IsAdmin(r)
 
 	err := Templates.ExecuteTemplate(w, tmpl, data)
 	if err != nil {

@@ -148,3 +148,64 @@ func GetPostsByAuthor(authorID int) ([]models.Post, error) {
 
 	return posts, nil
 }
+
+func GetAllPostsWithAuthors(limit, offset int) ([]struct {
+	models.Post
+	AuthorUsername string
+}, error) {
+	query := `
+        SELECT a.id, a.title, a.anons, a.full_text, a.author_id, 
+               a.created_at, u.username as author_username
+        FROM articles a
+        JOIN users u ON a.author_id = u.id
+        ORDER BY a.created_at DESC
+    `
+
+	if limit > 0 {
+		query += " LIMIT ? OFFSET ?"
+	}
+
+	var rows *sql.Rows
+	var err error
+
+	if limit > 0 {
+		rows, err = DB.Query(query, limit, offset)
+	} else {
+		rows, err = DB.Query(query)
+	}
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var posts []struct {
+		models.Post
+		AuthorUsername string
+	}
+
+	for rows.Next() {
+		var p struct {
+			models.Post
+			AuthorUsername string
+		}
+		var createdAt []byte
+
+		err := rows.Scan(
+			&p.ID, &p.Title, &p.Anons, &p.FullText,
+			&p.AuthorID, &createdAt, &p.AuthorUsername,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		p.CreatedAt, err = time.Parse("2006-01-02 15:04:05", string(createdAt))
+		if err != nil {
+			return nil, err
+		}
+
+		posts = append(posts, p)
+	}
+
+	return posts, nil
+}

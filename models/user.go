@@ -9,6 +9,8 @@ type User struct {
 	Username  string    `json:"username"`
 	Password  string    `json:"-"`
 	Email     string    `json:"email"`
+	IsAdmin   bool      `json:"isAdmin"`
+	IsBanned  bool      `json:"isBanned"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 }

@@ -56,7 +56,7 @@ func main() {
 	r.HandleFunc("/register", handlers.RegisterHandler).Methods("GET", "POST")
 	r.HandleFunc("/logout", handlers.LogoutHandler).Methods("GET")
 
-	// Защищенные маршруты (проверка аутентификации внутри обработчиков)
+	// Проверка аутентификации внутри обработчиков
 	r.HandleFunc("/create-post", handlers.CreatePostHandler).Methods("GET", "POST")
 	r.HandleFunc("/edit-post/{id:[0-9]+}", handlers.EditPostHandler).Methods("GET", "POST")
 	r.HandleFunc("/delete-post/{id:[0-9]+}", handlers.DeletePostHandler).Methods("POST")
@@ -66,6 +66,21 @@ func main() {
 	r.HandleFunc("/post/{id:[0-9]+}/comment", handlers.AddCommentHandler).Methods("POST")
 	r.HandleFunc("/comment/{id:[0-9]+}/delete", handlers.DeleteCommentHandler).Methods("POST")
 	r.HandleFunc("/comment/{id:[0-9]+}/edit", handlers.EditCommentHandler).Methods("GET", "POST")
+
+	// Админские маршруты
+	adminRouter := r.PathPrefix("/admin").Subrouter()
+	adminRouter.Use(middleware.AuthRequired)
+	adminRouter.Use(middleware.AdminRequired)
+	// работа с пользователями
+	adminRouter.HandleFunc("", handlers.AdminDashboardHandler).Methods("GET")
+	adminRouter.HandleFunc("/users", handlers.AdminUsersHandler).Methods("GET") // Новый обработчик
+	adminRouter.HandleFunc("/ban", handlers.BanUserHandler).Methods("POST")
+	adminRouter.HandleFunc("/unban", handlers.UnbanUserHandler).Methods("POST")
+	adminRouter.HandleFunc("/delete-user", handlers.DeleteUserHandler).Methods("POST")
+	// работа с постами
+	adminRouter.HandleFunc("/posts", handlers.AdminPostsHandler).Methods("GET")
+	adminRouter.HandleFunc("/posts/{id:[0-9]+}/edit", handlers.AdminEditPostHandler).Methods("GET", "POST")
+	adminRouter.HandleFunc("/posts/delete", handlers.AdminDeletePostHandler).Methods("POST")
 
 	// Запуск сервера
 	addr := ":" + config.AppConfig.ServerPort

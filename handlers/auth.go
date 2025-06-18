@@ -67,15 +67,25 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		username := r.FormValue("username")
 		password := r.FormValue("password")
 
+		// Получаем пользователя из БД
 		user, err := database.GetUserByUsername(username)
 		if err != nil {
-			log.Printf("Ошибка: %v", err)
+			log.Printf("Ошибка получения пользователя: %v", err)
 			utils.RenderTemplate(w, r, "login.html", map[string]interface{}{
 				"Error": "Неверные данные",
 			})
 			return
 		}
 
+		// Проверка блокировки ДО проверки пароля
+		if user.IsBanned {
+			utils.RenderTemplate(w, r, "login.html", map[string]interface{}{
+				"Error": "Ваш аккаунт заблокирован. Обратитесь к администратору.",
+			})
+			return
+		}
+
+		// Проверка пароля
 		if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
 			utils.RenderTemplate(w, r, "login.html", map[string]interface{}{
 				"Error": "Неверный пароль",
@@ -83,6 +93,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		// Создание сессии
 		session, err := middleware.Store.Get(r, "session")
 		if err != nil {
 			log.Printf("Ошибка сессии: %v", err)
@@ -93,6 +104,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		session.Values["authenticated"] = true
 		session.Values["user_id"] = user.ID
 		session.Values["username"] = user.Username
+		session.Values["is_admin"] = user.IsAdmin
+		session.Values["is_banned"] = user.IsBanned
 
 		if err := session.Save(r, w); err != nil {
 			log.Printf("Ошибка сохранения сессии: %v", err)
@@ -100,11 +113,14 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		log.Printf("Успешный вход: %s", username) // Лог для отладки
-		http.Redirect(w, r, "/profile", http.StatusSeeOther)
+		// Редирект в зависимости от роли
+		if user.IsAdmin {
+			http.Redirect(w, r, "/admin", http.StatusSeeOther)
+		} else {
+			http.Redirect(w, r, "/profile", http.StatusSeeOther)
+		}
 		return
 	}
-
 	utils.RenderTemplate(w, r, "login.html", nil)
 }
 
